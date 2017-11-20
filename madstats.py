@@ -52,7 +52,6 @@ for lens in reversed(data):
         for mount in lens['Lens mount']:
             newlens = lens.copy()
             newlens['Lens mount'] = mount
-            #print(newlens['Lens mount'])
             data.append(newlens)
             
 df = pd.DataFrame(data)
@@ -70,12 +69,44 @@ df = df[df['Lens mount'].isin(lensmounts)]
 #df.groupby('Lens mount')['Volume'].plot(kind='density', legend=True, grid=True, xlim=(0,4000))
 # if lensmounts has fewer elements, ldf.groupby('Lens mount')['Weight'].plot(kind='density') works, so some more clean-up of NaN fields is needed I think
 
-overview = df['Lens mount'].value_counts().plot(kind='bar', legend=True, grid=True, title='Lens count by lens mount')
+figure, axes = p.subplots(nrows=2, ncols=1, figsize=(7,8))
+ax1 = axes[0]
+ax = axes[1]
+
+overview = df['Lens mount'].value_counts().plot(kind='bar', legend=True, grid=True, title='Lens count by lens mount', ax=ax1, rot=60)
 for x in overview.patches:
   overview.annotate(str(x.get_height()), (x.get_x(), x.get_height()))
-p.subplots_adjust(bottom=0.30)
-p.xticks(rotation=60)
+ax1.xaxis.grid(False)
+#p.subplots_adjust(bottom=0.30)
+
+# scatterplot for number of elements/groups 'Groups' 'Elements' and the relation to lens weight
+# https://stackoverflow.com/questions/36954651/pandas-plot-on-3-variables
+elementsdf = df[df['Elements'].notnull()].sort_values('Elements')[['Elements', 'Groups','Weight']]
+fedf = elementsdf[elementsdf[elementsdf['Weight'].notnull()] < 5000]
+
+xmajor_ticks = [5,10,15,20,25]
+xminor_ticks = list(range(3,26))
+ymajor_ticks = [5,10,15,20]
+yminor_ticks = list(range(3,21))
+
+fedfplot = fedf.plot(kind='scatter',x='Elements', y='Groups', c='Weight', cmap='plasma', s=fedf['Elements'].value_counts(), legend=True, grid=True, ax=ax)
+# should also add a legend for the size of the dots but it's a lot of work
+# https://datasciencelab.wordpress.com/2013/12/21/beautiful-plots-with-pandas-and-matplotlib/
+                
+ax.set_xticks(xmajor_ticks)
+ax.set_xticks(xminor_ticks, minor=True)
+ax.set_yticks(ymajor_ticks)
+ax.set_yticks(yminor_ticks, minor=True)
+
+ax.grid(which='both')
+ax.grid(which='minor', alpha=0.2)
+ax.grid(which='major', alpha=0.5)
+
+figure.tight_layout()
+
 p.show()
+
+# graph for Number of diaphragm blades
 
 '''
 >>> df['Lens mount'].value_counts()
@@ -104,7 +135,7 @@ Leica TL                   5
 Samsung NX-M               3
 Name: Lens mount, dtype: int64
 
-left our ridiculous crap like https://www.dpreview.com/articles/8268122124/sigma250500
+left our ridiculous stuff like https://www.dpreview.com/articles/8268122124/sigma250500
 
 heaviest 20 lenses
 df[df['Weight'].notnull()].sort_values('Weight')[['Weight','Model']].tail(20)
