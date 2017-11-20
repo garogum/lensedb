@@ -3,9 +3,9 @@ Similar collection of scripts as for [cameradb](https://github.com/garogum/camer
 ![2 plot figure](/multiplot.png?raw=true "Overview and elements/groups plots")
 
 # Notes
-Data was filtered to only include the top 10 most represented lens mounts from the set, which are:
-`lensmounts = ['Canon EF','Nikon F (FX)','Sony/Minolta Alpha','Micro Four Thirds','Pentax KAF','Nikon F (DX)','Canon EF-S','Leica M','Sony E','Four Thirds']`
-The scatterplot data was filtered to only include lenses of non-null weight < 5000 (g, so 5kg), which filters out about 30 lenses.  
+Data was filtered to only include the top 10 most represented lens mounts from the set, which are:  
+`lensmounts = ['Canon EF','Nikon F (FX)','Sony/Minolta Alpha','Micro Four Thirds','Pentax KAF','Nikon F (DX)','Canon EF-S','Leica M','Sony E','Four Thirds']`  
+The scatterplot data was filtered to only include lenses of non-null weight < 5000 (g, so 5kg), which filters out 8 lenses (see aux info section for details).  
 The larger the dots, the more lenses with that number of elements in them
 
 # Usage
@@ -41,3 +41,16 @@ All mounts and respective number of lenses in scraped data:
 | Pentax 645AF2         |  5 |
 | Leica TL              |  5 |
 | Samsung NX-M          |  3 |
+
+Lenses heavier than 5kg:
+
+| Weight (g) | Model | Lens mount |
+| ----- | ----- | ----- |
+| 5060.0  |    Nikon AF-S Nikkor 600mm f/4G ED VR  | Nikon F (FX) |
+| 5360.0  |          Canon EF 600mm f/4.0L IS USM  |     Canon EF |
+| 5370.0  |          Canon EF 400mm f/2.8L IS USM  |     Canon EF |
+| 5880.0  |        Sigma 300-800mm F5.6 EX DG HSM  |     Canon EF |
+| 5880.0  |        Sigma 300-800mm F5.6 EX DG HSM  | Nikon F (FX) |
+| 5900.0  | Nikon AF-S Nikkor 600mm f/4D ED-IF II  | Nikon F (FX) |
+| 15700.0 |             Sigma 200-500mm F2.8 EX DG |      Canon EF |
+| 15700.0 |             Sigma 200-500mm F2.8 EX DG |  Nikon F (FX) |
