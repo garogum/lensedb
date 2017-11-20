@@ -69,7 +69,7 @@ df = df[df['Lens mount'].isin(lensmounts)]
 #df.groupby('Lens mount')['Volume'].plot(kind='density', legend=True, grid=True, xlim=(0,4000))
 # if lensmounts has fewer elements, ldf.groupby('Lens mount')['Weight'].plot(kind='density') works, so some more clean-up of NaN fields is needed I think
 
-figure, axes = p.subplots(nrows=2, ncols=1, figsize=(7,8))
+figure, axes = p.subplots(nrows=2, ncols=1, figsize=(8,9))
 ax1 = axes[0]
 ax = axes[1]
 
