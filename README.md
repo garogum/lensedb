@@ -2,6 +2,9 @@ Similar collection of scripts as for [cameradb](https://github.com/garogum/camer
 
 ![2 plot figure](/multiplot.png?raw=true "Overview and elements/groups plots")
 
+![distribution multiplot](/multiplot_weight_vol.png "Weight and Size distribution")
+
+
 # Notes
 Data was filtered to only include the top 10 most represented lens mounts from the set, which are:  
 `lensmounts = ['Canon EF','Nikon F (FX)','Sony/Minolta Alpha','Micro Four Thirds','Pentax KAF','Nikon F (DX)','Canon EF-S','Leica M','Sony E','Four Thirds']`  
