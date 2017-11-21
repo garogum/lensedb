@@ -83,8 +83,9 @@ ax1.xaxis.grid(False)
 #p.subplots_adjust(bottom=0.30)
 
 # scatterplot for number of elements/groups 'Groups' 'Elements' and the relation to lens weight
-elementsdf = df[df['Elements'].notnull()].sort_values('Elements')[['Elements', 'Groups','Weight']]
+elementsdf = df[df['Elements'].notnull()].sort_values('Elements')[['Elements', 'Groups','Weight', 'Lens type']]
 fedf = elementsdf[elementsdf[elementsdf['Weight'].notnull()] < 5000]
+fedf = fedf[fedf['Lens type'] != 'Teleconverter']
 
 xmajor_ticks = [5,10,15,20,25]
 xminor_ticks = list(range(3,26))
@@ -107,13 +108,31 @@ ax.grid(which='major', alpha=0.5)
 figure.tight_layout()
 figure.savefig('multiplot_overview_elem')
 
-figure3, axes3 = p.subplots(nrows=1, ncols=1, figsize=(12,8))
-typeplot = df[df['Lens type'] != 'Teleconverter'].groupby(['Lens mount','Lens type']).size().unstack().plot(kind='bar', rot=60, title='Types of lenses by mount',ax=axes3, grid=True)
+figure3, axes3 = p.subplots(nrows=2, ncols=1, figsize=(12,10))
+typeplot = df[df['Lens type'] != 'Teleconverter'].groupby(['Lens mount','Lens type']).size().unstack().plot(kind='bar', rot=60, title='Types of lenses by mount',ax=axes3[0], grid=True)
 for x in typeplot.patches:
   typeplot.annotate(str(x.get_height()), (x.get_x(), x.get_height()))
-axes3.xaxis.grid(False)
+axes3[0].xaxis.grid(False)
+
+# plot elements and weight, grouped by lens type
+groups = fedf.groupby('Lens type')
+for name, group in groups:                         
+  axes3[1].plot(group.Elements, group.Weight, marker='o', linestyle='', label=name)
+
+ymajor_ticks = list(range(0,5001,1000))
+yminor_ticks = list(range(0,5001,500))
+
+axes3[1].set_xticks(xmajor_ticks)
+axes3[1].set_xticks(xminor_ticks, minor=True)
+axes3[1].set_yticks(yminor_ticks, minor=True)
+axes3[1].set_yticks(ymajor_ticks)
+axes3[1].grid(which='minor', alpha=0.3)
+axes3[1].grid(which='major', alpha=0.5)
+axes3[1].legend()
+#axes3[1].title('Lens weight & number of elements, by type')
+  
 figure3.tight_layout()
-figure3.savefig('types_by_mount')
+figure3.savefig('types_by_mount_elements_by_type')
 p.show()
 
 # graph for Number of diaphragm blades (not too exciting, most are between 7 and 10)
