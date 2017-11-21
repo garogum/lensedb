@@ -19,7 +19,6 @@ with open("all.json") as data_file:
     data = json.load(data_file)
 
 # a lot of cleaning up before throwing it in a dataframe
-        
 for lens in data:
     if 'Weight' in lens:
         lens['Weight'] = int(lens['Weight'].split("g")[0].strip())
@@ -56,18 +55,22 @@ for lens in reversed(data):
             
 df = pd.DataFrame(data)
 
-# too many, narrow it down to top 10 or smth
-# was 23, 24 with Leica SL
 #lensmounts = ['Pentax KAF', 'Canon EF', 'Samsung NX', 'Four Thirds', 'Sony/Minolta Alpha', 'Nikon F (FX)', 'Leica M', 'Micro Four Thirds', 'Pentax KAF3', 'Sony E', 'Nikon 1', 'Fujifilm G', 'Canon EF-S', 'Nikon F (DX)', 'Sony FE', 'Canon EF-M', 'Pentax KAF2', 'Sony/Minolta Alpha DT', 'Fujifilm X', 'Leica TL', 'Pentax Q', 'Pentax 645AF2', 'Samsung NX-M']
 # top 10:
 lensmounts = ['Canon EF','Nikon F (FX)','Sony/Minolta Alpha','Micro Four Thirds','Pentax KAF','Nikon F (DX)','Canon EF-S','Leica M','Sony E','Four Thirds']
 
 df = df[df['Lens mount'].isin(lensmounts)]
+# TODO remove teleconverters
 
-#df.groupby('Lens mount')['Weight'].plot(kind='density')
-#df.groupby('Lens mount')['Weight'].plot(kind='hist', legend=True, grid=True,xlim=(0,4000))
-#df.groupby('Lens mount')['Volume'].plot(kind='density', legend=True, grid=True, xlim=(0,4000))
-# if lensmounts has fewer elements, ldf.groupby('Lens mount')['Weight'].plot(kind='density') works, so some more clean-up of NaN fields is needed I think
+figure2,axes2 = p.subplots(nrows=2, ncols=1, figsize=(12,8))
+# https://pandas.pydata.org/pandas-docs/stable/visualization.html#plotting-with-error-bars
+# https://stackoverflow.com/questions/34917727/stacked-bar-plot-by-grouped-data-with-pandas
+df[df['Weight'].notnull()].groupby('Lens mount')['Weight'].plot(kind='density', legend=True, grid=True, xlim=(0,2500), title='Lens weight (g) by mount',ax=axes2[0])
+df[df['Volume'].notnull()].groupby('Lens mount')['Volume'].plot(kind='density', legend=True, grid=True, xlim=(0,2500), title='Lens size (volume cm^3) by mount',ax=axes2[1])
+axes2[0].grid(which='major', alpha=0.5)
+axes2[1].grid(which='major', alpha=0.5)
+figure2.tight_layout()
+figure2.savefig('multiplot_weight_vol')
 
 figure, axes = p.subplots(nrows=2, ncols=1, figsize=(8,9))
 ax1 = axes[0]
@@ -80,7 +83,6 @@ ax1.xaxis.grid(False)
 #p.subplots_adjust(bottom=0.30)
 
 # scatterplot for number of elements/groups 'Groups' 'Elements' and the relation to lens weight
-# https://stackoverflow.com/questions/36954651/pandas-plot-on-3-variables
 elementsdf = df[df['Elements'].notnull()].sort_values('Elements')[['Elements', 'Groups','Weight']]
 fedf = elementsdf[elementsdf[elementsdf['Weight'].notnull()] < 5000]
 
@@ -103,38 +105,21 @@ ax.grid(which='minor', alpha=0.2)
 ax.grid(which='major', alpha=0.5)
 
 figure.tight_layout()
+figure.savefig('multiplot_overview_elem')
 
+figure3, axes3 = p.subplots(nrows=1, ncols=1, figsize=(12,8))
+typeplot = df[df['Lens type'] != 'Teleconverter'].groupby(['Lens mount','Lens type']).size().unstack().plot(kind='bar', rot=60, title='Types of lenses by mount',ax=axes3, grid=True)
+for x in typeplot.patches:
+  typeplot.annotate(str(x.get_height()), (x.get_x(), x.get_height()))
+axes3.xaxis.grid(False)
+figure3.tight_layout()
+figure3.savefig('types_by_mount')
 p.show()
 
-# graph for Number of diaphragm blades
+# graph for Number of diaphragm blades (not too exciting, most are between 7 and 10)
+# graph for type of lens (zoom or prime) and weight
 
 '''
->>> df['Lens mount'].value_counts()
-Canon EF                 226
-Nikon F (FX)             201
-Sony/Minolta Alpha       130
-Micro Four Thirds         93
-Pentax KAF                88
-Nikon F (DX)              85
-Canon EF-S                71
-Leica M                   56
-Sony E                    53
-Four Thirds               42
-Pentax KAF3               41
-Fujifilm X                38
-Sony FE                   36
-Samsung NX                28
-Canon EF-M                17
-Pentax KAF2               15
-Nikon 1                   13
-Sony/Minolta Alpha DT     12
-Pentax Q                   8
-Fujifilm G                 6
-Pentax 645AF2              5
-Leica TL                   5
-Samsung NX-M               3
-Name: Lens mount, dtype: int64
-
 left our ridiculous stuff like https://www.dpreview.com/articles/8268122124/sigma250500
 
 heaviest 20 lenses
