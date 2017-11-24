@@ -12,6 +12,7 @@ The scatterplot data was filtered to only include lenses of non-null weight < 50
 The larger the dots, the more lenses with that number of elements in them
 
 # Usage
+0. Install dependencies with `pip install -r requirements.txt`
 1. Run specparser.py to fetch the links for camera spec pages of all vendors listed at https://www.dpreview.com/products/. This will create a lenses.txt file which will be used as input for the scrapy crawler
 2. Run `scrapy crawl lensedb`, which will fetch all pages, saving them to /lensdata, and extracting relevant info into individual JSON files under /lens_specs
 3. Run madstats.py to aggregate all individual JSON files into a single all.json which will be used by pandas and matplotlib to generate plots.
